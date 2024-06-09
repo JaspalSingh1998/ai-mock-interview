@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { chatSession } from "@/utils/GeminiAIModel";
 
 const Launch = () => {
   const [title, setTitle] = useState("");
@@ -14,32 +15,17 @@ const Launch = () => {
   const handleGenerateQuestions = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const questionData = {
-        title,
-        yoe,
-        description,
-    };
     
-    try {
-        const result = await fetch('/api/generate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(questionData),
-        });
+    const inputPrompt = `Job Title: ${title}
+    Years of Experience : ${yoe}
+    Job Description: ${description}.
+    Based on Above information could you please generate 4 technical questions and answers in JSON format for my mock interview.
+    `;
 
-        if (!result.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const data = await result.json();
-        console.log(data);
-    } catch (error) {
-        console.error('Error:', error);
-    } finally {
-        setLoading(false);
-    }
+    const result = await chatSession.sendMessage(inputPrompt);
+    const mockJsonResponse = (result.response.text()).replace('```json', '').replace('```', '');
+    console.log(JSON.parse(mockJsonResponse));
+    setLoading(false);
 };
 
 
