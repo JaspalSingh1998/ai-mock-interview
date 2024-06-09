@@ -1,7 +1,14 @@
-import { Inter } from "next/font/google";
+import { Inter as FontSans } from "next/font/google"
 import "./globals.css";
+import Link from "next/link";
+import Image from "next/image";
 
-const inter = Inter({ subsets: ["latin"] });
+import { cn } from "@/lib/utils"
+ 
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
 
 export const metadata = {
   title: "Create Next App",
@@ -11,7 +18,28 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={cn(
+          "min-h-screen font-sans antialiased",
+          fontSans.variable
+        )}>
+        <main className="container mx-auto p-6">
+        <nav className="flex justify-between mb-6">
+          <Image src={'/logo.svg'} alt="logo" width={80} height={80}/>
+          <ul className="flex gap-6">
+            <li className="font-bold hover:text-purple-500 transition-all ease-in-out hover:border-b-2 border-purple-500">
+              <Link href={'/'}>Home</Link>
+            </li>
+            <li className="font-bold hover:text-purple-500 transition-all ease-in-out hover:border-b-2 border-purple-500">
+            <Link href={'/launch'}>Launch</Link>
+            </li>
+            <li className="font-bold hover:text-purple-500 transition-all ease-in-out hover:border-b-2 border-purple-500">
+              Sign In
+            </li>
+          </ul>
+        </nav>
+        {children}
+        </main>
+        </body>
     </html>
   );
 }
