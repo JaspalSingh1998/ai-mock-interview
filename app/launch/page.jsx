@@ -1,33 +1,73 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { chatSession } from "@/utils/GeminiAIModel";
+import { v4 as uuidv4 } from 'uuid';
+import { useUser } from "@clerk/nextjs";
+import { db } from "@/utils/db";
+import moment from "moment/moment";
+import { Interview } from "@/utils/schema";
+import { useRouter } from "next/navigation";
 
 const Launch = () => {
   const [title, setTitle] = useState("");
   const [yoe, setYoe] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState(true);
+  const [jsonResponse, setJsonResponse] = useState(null);
+
+  const { user } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    setDisabled(true);
+    if (yoe !== '' && title !== '' && description !== '') {
+      setDisabled(false);
+    }
+  }, [title, yoe, description]);
+
   const handleGenerateQuestions = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     const inputPrompt = `Job Title: ${title}
-    Years of Experience : ${yoe}
+    Years of Experience: ${yoe}
     Job Description: ${description}.
-    Based on Above information could you please generate 4 technical questions and answers in JSON format for my mock interview.
+    Based on the above information, could you please generate 4 technical questions and answers in JSON format for my mock interview.
     `;
 
     const result = await chatSession.sendMessage(inputPrompt);
-    const mockJsonResponse = (result.response.text()).replace('```json', '').replace('```', '');
-    console.log(JSON.parse(mockJsonResponse));
-    setLoading(false);
-};
+    const mockJsonResponse = (await result.response.text()).replace('```json', '').replace('```', '');
+    const parsedJsonResponse = JSON.parse(mockJsonResponse);
+    setJsonResponse(parsedJsonResponse);
 
+    if (parsedJsonResponse) {
+      try {
+        const resp = await db.insert(Interview).values({
+          uuid: uuidv4(),
+          TailoredInterviewData: parsedJsonResponse,
+          position: title,
+          description: description,
+          experience: yoe,
+          createdBy: user?.primaryEmailAddress?.emailAddress,
+          createdAt: moment().format('YYYY-MM-DD')
+        }).returning({ uuid: Interview.uuid });
+        setDescription('');
+        setTitle('');
+        setYoe('');
+        router.push(`/interview/${resp[0].uuid}`);
+      } catch (error) {
+        console.error('Error inserting into database:', error);
+      }
+    }
+
+    setLoading(false);
+  };
 
   return (
     <section className="min-h-full flex flex-col items-center mt-20">
@@ -40,7 +80,7 @@ const Launch = () => {
             onChange={(e) => setTitle(e.target.value)}
             type="text"
             id="job"
-            placeholder="Software Enginner | Data Analyst | QA"
+            placeholder="Software Engineer | Data Analyst | QA"
           />
         </div>
         <div className="grid w-full items-center gap-2">
@@ -75,7 +115,7 @@ const Launch = () => {
             Tailoring Questions...
           </Button>
         ) : (
-          <Button onClick={handleGenerateQuestions}>Generate Questions</Button>
+          <Button disabled={disabled} onClick={handleGenerateQuestions}>Generate Questions</Button>
         )}
       </div>
     </section>
