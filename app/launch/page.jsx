@@ -42,15 +42,17 @@ const Launch = () => {
     `;
 
     const result = await chatSession.sendMessage(inputPrompt);
-    const mockJsonResponse = (await result.response.text()).replace('```json', '').replace('```', '');
+    const mockJsonResponse = (result.response?.text()).replace('```json', '').replace('```', '');
+    console.log(mockJsonResponse);
     const parsedJsonResponse = JSON.parse(mockJsonResponse);
+    console.log(mockJsonResponse);
     setJsonResponse(parsedJsonResponse);
 
     if (parsedJsonResponse) {
       try {
         const resp = await db.insert(Interview).values({
           uuid: uuidv4(),
-          TailoredInterviewData: parsedJsonResponse,
+          TailoredInterviewData: mockJsonResponse,
           position: title,
           description: description,
           experience: yoe,

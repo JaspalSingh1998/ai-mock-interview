@@ -14,8 +14,7 @@ const InterviewPage = ({ params }) => {
     const result = await db
       .select()
       .from(Interview)
-      .where(eq(Interview.uuid, params.uuid))[0];
-    console.log(result);
+      .where(eq(Interview.uuid, params.uuid));
   };
   useEffect(() => {
     fetchInterviewData();

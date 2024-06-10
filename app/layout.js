@@ -1,5 +1,6 @@
 import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster"
 
 import { cn } from "@/lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
             <Navbar />
             {children}
           </main>
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>
