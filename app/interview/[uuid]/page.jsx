@@ -10,11 +10,13 @@ import Link from "next/link";
 
 const InterviewPage = ({ params }) => {
   const [webcamEnabled, setWebcamEnabled] = useState(false);
+  const [data, setData] = useState();
   const fetchInterviewData = async () => {
     const result = await db
       .select()
       .from(Interview)
       .where(eq(Interview.uuid, params.uuid));
+      setData(result[0]);
   };
   useEffect(() => {
     fetchInterviewData();
@@ -25,9 +27,9 @@ const InterviewPage = ({ params }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div className="flex flex-col gap-5">
             <div className="flex flex-col p-5 rounded-lg border gap-5">
-                <p><span>Job Title: </span>Software Engineer</p>
-                <p><span>Experience: </span>2 Years</p>
-                <p><span>Job Description: </span>MERN Stack.</p>
+                <p><span>Job Title: </span>{data?.position}</p>
+                <p><span>Experience: </span>{data?.experience}</p>
+                <p><span>Job Description: </span>{data?.description}</p>
             </div>
             <div className="p-5 border rounded-lg border-yellow-300 bg-yellow-100">
                 <h2 className="flex gap-2 items-center text-yellow-500"><Lightbulb /> <strong>Information</strong></h2>

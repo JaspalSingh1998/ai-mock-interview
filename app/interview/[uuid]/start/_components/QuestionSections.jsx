@@ -10,7 +10,7 @@ const QuestionSections = ({ interviewQuestions, activeQuestionIndex }) => {
             <h2
               key={index}
               className={`p-2 bg-secondary rounded-full text-center text-xs md:text-sm cursor-pointer ${
-                activeQuestionIndex === index ? "bg-purple-500 text-white" : ""
+                activeQuestionIndex === index ? "bg-purple-700 text-white" : ""
               }`}
             >
               Question #{index + 1}
