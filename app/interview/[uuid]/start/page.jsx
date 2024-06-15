@@ -28,7 +28,7 @@ const StartInterviewPage = ({params}) => {
 
 
   const goToResult = () => {
-    router.push('/result');
+    router.push(`/interview/${params.uuid}/result`);
   }
   return (
     <div>
