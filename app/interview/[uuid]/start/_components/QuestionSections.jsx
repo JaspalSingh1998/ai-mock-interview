@@ -10,7 +10,7 @@ const QuestionSections = ({ interviewQuestions, activeQuestionIndex }) => {
             <h2
               key={index}
               className={`p-2 bg-secondary rounded-full text-center text-xs md:text-sm cursor-pointer ${
-                activeQuestionIndex === index ? "bg-purple-300 text-white" : ""
+                activeQuestionIndex === index ? "bg-purple-500 text-white" : ""
               }`}
             >
               Question #{index + 1}
@@ -18,7 +18,7 @@ const QuestionSections = ({ interviewQuestions, activeQuestionIndex }) => {
           ))}
         </div>
         <h2 className="my-5 text-md md:text-lg">{(interviewQuestions[activeQuestionIndex])?.question}</h2>
-        <div className="flex flex-col gap-2 p-6 rounded-lg justify-center bg-blue-100 mt-10">
+        <div className="flex flex-col gap-2 p-6 rounded-lg justify-center bg-blue-100 mt-20">
           <h2 className="flex gap items-center text-purple-300">
             <Lightbulb />
             <strong>Note:</strong>

@@ -6,8 +6,10 @@ import React, { useEffect, useState } from 'react'
 import QuestionSections from './_components/QuestionSections';
 import RecordAnswerSection from './_components/RecordAnswerSection';
 import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 const StartInterviewPage = ({params}) => {
+  const router = useRouter();
   const [interviewData, setInterviewData] = useState();
   const [interviewQuestions, setInterviewQuestions] = useState();
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
@@ -25,6 +27,9 @@ const StartInterviewPage = ({params}) => {
   }, []);
 
 
+  const goToResult = () => {
+    router.push('/result');
+  }
   return (
     <div>
       <div className="grid-cols-1 gap-10 grid md:grid-cols-2">
@@ -34,7 +39,7 @@ const StartInterviewPage = ({params}) => {
       <div className="flex justify-end gap-6">
         {activeQuestionIndex > 0 && <Button onClick={() => setActiveQuestionIndex(activeQuestionIndex - 1)}>Previous Question</Button>}
         {activeQuestionIndex  != interviewQuestions?.length - 1 && <Button onClick={() => setActiveQuestionIndex(activeQuestionIndex + 1)}>Next Question</Button>}
-        {activeQuestionIndex === interviewQuestions?.length - 1 && <Button>End Interview</Button>}
+        {activeQuestionIndex === interviewQuestions?.length - 1 && <Button onClick={() => goToResult()}>End Interview</Button>}
       </div>
     </div>
   )
